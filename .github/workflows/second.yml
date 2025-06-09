@@ -1,0 +1,24 @@
+name: second_workflow
+
+on:
+    push:
+          branches:
+                - main 
+    workflow_dispatch:
+
+jobs:
+      build:
+              runs-on: ubuntu-latest
+
+              steps: 
+                   - name: cloning repo
+                     uses: actions/checkout@v4
+
+                   - name: building image
+                     run: docker build -t moaazreda/wh_repo:latest 
+
+                   - name: Docker login
+                     run: docker login -u moaazreda -p ${{ secrets.DOCKER_HUB_TOKEN }}
+
+                   - name: Docker push
+                     run: docker push moaazreda/wh_repo:latest .
