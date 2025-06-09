@@ -10,6 +10,6 @@ jobs:
               runs-on: ubuntu-latest
 
               steps: 
-                    name: cloning repo
-                    uses: actions/checkout@v4
+                   - name: cloning repo
+                     uses: actions/checkout@v4
                
