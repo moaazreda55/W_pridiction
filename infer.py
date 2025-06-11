@@ -3,7 +3,8 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report , confusion_matrix ,accuracy_score
-import pickle
+from skl2onnx import convert_sklearn
+from skl2onnx.common.data_types import FloatTensorType
 
 df = pd.read_csv('data/500_Person.csv')
 
@@ -22,9 +23,12 @@ y_train_pred = model_tree.predict(X_train)
 y_pred = model_tree.predict(X_test)
 print(accuracy_score(y_train_pred,y_train))
 print(accuracy_score(y_pred,y_test))
-# print(classification_report(y_pred,y_test))
-# print(confusion_matrix(y_pred,y_test))
 
 
-with open('Weight Predection model_tree.pkl', 'wb') as file:
-    pickle.dump(model_tree, file)
+# Convert to ONNX
+initial_type = [('float_input', FloatTensorType([None, X_train.shape[1]]))]
+onnx_model = convert_sklearn(model_tree, initial_types=initial_type)
+
+# Save ONNX model
+with open("model.onnx", "wb") as f:
+    f.write(onnx_model.SerializeToString())
